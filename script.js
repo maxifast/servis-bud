@@ -142,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Helper to Send to Viber with Fallback ---
   function sendToViber(text) {
-    const viberUrl = 'viber://chat?number=%2B380962873737&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
+    // try formatting number without + and with draft param
+    const viberUrl = 'viber://chat?number=380962873737&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
 
     try {
       const tempInput = document.createElement('textarea');
@@ -151,8 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tempInput.select();
       document.execCommand('copy');
       document.body.removeChild(tempInput);
-
-      alert('Дані заявки скопійовано!\n\nЯкщо Viber відкриється з порожнім полем, просто натисніть "Вставити", щоб відправити ваші дані.');
     } catch (e) {
       console.error('Clipboard copy failed');
     }
