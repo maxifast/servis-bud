@@ -140,26 +140,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- Helper to Send to Viber with Fallback ---
-  function sendToViber(text) {
-    // try formatting number without + and with draft param
-    const viberUrl = 'viber://chat?number=380962873737&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
+  // --- Messenger Modal Logic ---
+  let pendingMessengerMessage = '';
 
-    try {
-      const tempInput = document.createElement('textarea');
-      tempInput.value = text;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-    } catch (e) {
-      console.error('Clipboard copy failed');
-    }
+  window.closeMessengerModal = function () {
+    const modal = document.getElementById('messengerModal');
+    if (modal) modal.classList.remove('active');
+    pendingMessengerMessage = '';
+  };
 
-    window.open(viberUrl, '_blank');
+  function openMessengerModal(text) {
+    pendingMessengerMessage = text;
+    const modal = document.getElementById('messengerModal');
+    if (modal) modal.classList.add('active');
   }
 
-  // --- Form Submission (Viber redirect) ---
+  document.querySelectorAll('.msg-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const messenger = btn.dataset.messenger;
+      const text = pendingMessengerMessage;
+      if (!text) return;
+
+      let link = '';
+      if (messenger === 'viber') {
+        link = 'viber://chat?number=380962873737&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
+        try {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = text;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+        } catch (err) { }
+      } else if (messenger === 'telegram') {
+        link = 'https://t.me/+380962873737?text=' + encodeURIComponent(text);
+      } else if (messenger === 'whatsapp') {
+        link = 'https://wa.me/380962873737?text=' + encodeURIComponent(text);
+      }
+
+      if (link) {
+        window.open(link, '_blank');
+      }
+      window.closeMessengerModal();
+    });
+  });
+
+  // --- Form Submission (Messenger redirect) ---
   function handleFormSubmit(form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -173,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
           text += `\n🎯 Цікавить: ${service.options[service.selectedIndex].text}`;
         }
 
-        sendToViber(text);
+        openMessengerModal(text);
 
         // Show success
         const btn = form.querySelector('button[type="submit"]');
@@ -196,8 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroFormSubmit) handleFormSubmit(heroFormSubmit);
   if (footerForm) handleFormSubmit(footerForm);
 
-  // --- Send Calculator to Viber ---
-  document.querySelectorAll('.btn-calc-viber').forEach(btn => {
+  // --- Send Calculator to Messenger ---
+  document.querySelectorAll('.btn-calc-messenger').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const type = btn.getAttribute('data-type');
@@ -224,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (message) {
-        sendToViber(message);
+        openMessengerModal(message);
       }
     });
   });

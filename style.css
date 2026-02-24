@@ -1457,3 +1457,83 @@ a:hover {
     scroll-behavior: auto;
   }
 }
+
+/* === MESSENGER MODAL === */
+.messenger-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.messenger-modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.messenger-modal-content {
+  width: 90%;
+  max-width: 400px;
+  padding: 32px 24px;
+  text-align: center;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+  background: rgba(30, 41, 59, 0.95);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.messenger-modal-overlay.active .messenger-modal-content {
+  transform: translateY(0);
+}
+
+.messenger-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.msg-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.msg-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.msg-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.msg-btn.viber-select {
+  background: #7C4DFF;
+}
+
+.msg-btn.telegram-select {
+  background: #0088CC;
+}
+
+.msg-btn.whatsapp-select {
+  background: #25D366;
+}
