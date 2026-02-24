@@ -41,6 +41,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 body {
@@ -787,6 +788,16 @@ a:hover {
 .catalog-table-wrapper {
   overflow-x: auto;
   margin-top: 40px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline-start: 20px;
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.catalog-table-wrapper::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Edge */
 }
 
 .catalog-table {
@@ -809,12 +820,29 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  scroll-snap-align: start;
+}
+
+.catalog-table th:nth-child(1) {
+  width: 35%;
+  min-width: 200px;
+}
+
+.catalog-table th:nth-child(2) {
+  width: 45%;
+  min-width: 250px;
+}
+
+.catalog-table th:nth-child(3) {
+  width: 20%;
+  min-width: 150px;
 }
 
 .catalog-table td {
   padding: 14px 20px;
   border-bottom: 1px solid var(--border-glass);
   color: var(--text-dark);
+  scroll-snap-align: start;
 }
 
 .catalog-table tbody tr:hover {
@@ -1392,6 +1420,18 @@ a:hover {
   .btn {
     padding: 12px 24px;
     font-size: 0.9rem;
+  }
+
+  .catalog-table th:nth-child(1) {
+    min-width: 150px;
+  }
+
+  .catalog-table th:nth-child(2) {
+    min-width: 200px;
+  }
+
+  .catalog-table th:nth-child(3) {
+    min-width: 120px;
   }
 }
 
