@@ -155,6 +155,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal) modal.classList.add('active');
   }
 
+  const closeBtn = document.getElementById('closeMessengerModal');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', window.closeMessengerModal);
+  }
+
+  const messengerModalEl = document.getElementById('messengerModal');
+  if (messengerModalEl) {
+    messengerModalEl.addEventListener('click', (e) => {
+      if (e.target === messengerModalEl) {
+        window.closeMessengerModal();
+      }
+    });
+  }
+
   document.querySelectorAll('.msg-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
