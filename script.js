@@ -140,7 +140,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- Form Submission (Telegram redirect) ---
+  // --- Helper to Send to Viber with Fallback ---
+  function sendToViber(text) {
+    const viberUrl = 'viber://chat?number=%2B380962873737&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
+
+    try {
+      const tempInput = document.createElement('textarea');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      alert('Дані заявки скопійовано!\n\nЯкщо Viber відкриється з порожнім полем, просто натисніть "Вставити", щоб відправити ваші дані.');
+    } catch (e) {
+      console.error('Clipboard copy failed');
+    }
+
+    window.open(viberUrl, '_blank');
+  }
+
+  // --- Form Submission (Viber redirect) ---
   function handleFormSubmit(form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -154,8 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
           text += `\n🎯 Цікавить: ${service.options[service.selectedIndex].text}`;
         }
 
-        const tgUrl = 'https://t.me/+380962873737?text=' + encodeURIComponent(text);
-        window.open(tgUrl, '_blank');
+        sendToViber(text);
 
         // Show success
         const btn = form.querySelector('button[type="submit"]');
@@ -178,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroFormSubmit) handleFormSubmit(heroFormSubmit);
   if (footerForm) handleFormSubmit(footerForm);
 
-  // --- Send Calculator to Telegram ---
-  document.querySelectorAll('.btn-calc-messenger').forEach(btn => {
+  // --- Send Calculator to Viber ---
+  document.querySelectorAll('.btn-calc-viber').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const type = btn.getAttribute('data-type');
@@ -206,8 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (message) {
-        const tgUrl = 'https://t.me/+380962873737?text=' + encodeURIComponent(message);
-        window.open(tgUrl, '_blank');
+        sendToViber(message);
       }
     });
   });
