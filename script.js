@@ -170,6 +170,40 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroFormSubmit) handleFormSubmit(heroFormSubmit);
   if (footerForm) handleFormSubmit(footerForm);
 
+  // --- Send Calculator to Viber ---
+  document.querySelectorAll('.btn-calc-viber').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const type = btn.getAttribute('data-type');
+      let message = '';
+
+      if (type === 'manipulator') {
+        const weightSelect = document.getElementById('calcWeight');
+        const weightText = weightSelect.options[weightSelect.selectedIndex].text;
+        const distance = document.getElementById('calcDistance').value;
+        const hours = document.getElementById('calcHours').value;
+        const result = document.getElementById('calcManipResult').textContent.trim();
+
+        message = `Заявка з калькулятора (Маніпулятор)\nВага вантажу: ${weightText}\nВідстань від Києва: ${distance} км\nГодин роботи: ${hours}\nОрієнтовна вартість: ${result}`;
+      } else if (type === 'bytovka') {
+        const typeSelect = document.getElementById('calcType');
+        const typeText = typeSelect.options[typeSelect.selectedIndex].text;
+        const conditionSelect = document.getElementById('calcCondition');
+        const conditionText = conditionSelect.options[conditionSelect.selectedIndex].text;
+        const deliverySelect = document.getElementById('calcDelivery');
+        const deliveryText = deliverySelect.options[deliverySelect.selectedIndex].text;
+        const result = document.getElementById('calcBytResult').textContent.trim();
+
+        message = `Заявка з калькулятора (Побутівка)\nТип побутівки: ${typeText}\nСтан/Тип: ${conditionText}\nДоставка: ${deliveryText}\nВартість: ${result}`;
+      }
+
+      if (message) {
+        const viberUrl = 'viber://chat?number=%2B380962873737&text=' + encodeURIComponent(message);
+        window.open(viberUrl, '_blank');
+      }
+    });
+  });
+
   // --- Phone Input Mask (simple) ---
   document.querySelectorAll('input[type="tel"]').forEach(input => {
     input.addEventListener('focus', () => {

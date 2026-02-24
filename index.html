@@ -277,9 +277,8 @@
                         <p class="calc-result-label">Орієнтовна вартість</p>
                         <p class="calc-result-price" id="calcManipResult">10 000 <small>грн</small></p>
                     </div>
-                    <button class="btn btn-primary" style="width:100%"
-                        onclick="document.getElementById('heroForm').scrollIntoView({behavior:'smooth'})">Забронювати
-                        машину</button>
+                    <button class="btn btn-primary btn-calc-viber" style="width:100%" data-type="manipulator">Відправити
+                        розрахунок у Viber</button>
                     <p class="calc-note">* Мінімальне замовлення — 4 години. Точну ціну уточнюйте у оператора.</p>
                 </div>
                 <div class="glass-card calc-card">
@@ -315,9 +314,8 @@
                         <p class="calc-result-label">Вартість</p>
                         <p class="calc-result-price" id="calcBytResult">від 4 500 <small>грн/міс</small></p>
                     </div>
-                    <button class="btn btn-primary" style="width:100%"
-                        onclick="window.open('viber://chat?number=%2B380688702545','_blank')">Отримати специфікацію у
-                        месенджер</button>
+                    <button class="btn btn-primary btn-calc-viber" style="width:100%" data-type="bytovka">Відправити
+                        розрахунок у Viber</button>
                     <p class="calc-note">* Вартість вказана без ПДВ. Мінімальне замовлення оренди — 2 400 грн.</p>
                 </div>
             </div>
@@ -379,65 +377,63 @@
         <div class="container">
             <h2 class="section-title">Каталог та <span>ціни</span></h2>
             <p class="section-subtitle">Актуальні ціни на послуги маніпулятора та побутівки</p>
-            <div class="catalog-table-wrapper">
-                <div class="glass-card" style="padding:0;overflow:hidden">
-                    <table class="catalog-table">
-                        <thead>
-                            <tr>
-                                <th>Послуга</th>
-                                <th>Характеристики</th>
-                                <th>Ціна</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Маніпулятор (до 5т)</td>
-                                <td>Борт 6м, стріла 7м, м. Київ</td>
-                                <td class="price">від 2 500 грн/год</td>
-                            </tr>
-                            <tr>
-                                <td>Маніпулятор (5-10т)</td>
-                                <td>Борт 8м, стріла 10м, м. Київ</td>
-                                <td class="price">від 3 500 грн/год</td>
-                            </tr>
-                            <tr>
-                                <td>Маніпулятор (10-15т)</td>
-                                <td>Борт 12м, стріла 12м, м. Київ</td>
-                                <td class="price">від 4 500 грн/год</td>
-                            </tr>
-                            <tr>
-                                <td>Побутівка металева (оренда)</td>
-                                <td>6×2.4м, утеплена, електрика</td>
-                                <td class="price">від 4 500 грн/міс</td>
-                            </tr>
-                            <tr>
-                                <td>Побутівка дерев'яна (оренда)</td>
-                                <td>6×2.4м, утеплена, базова</td>
-                                <td class="price">від 3 000 грн/міс</td>
-                            </tr>
-                            <tr>
-                                <td>Побутівка металева (нова)</td>
-                                <td>6×2.4м, під ключ, електрика</td>
-                                <td class="price">від 65 000 грн</td>
-                            </tr>
-                            <tr>
-                                <td>Побутівка дерев'яна (нова)</td>
-                                <td>6×2.4м, під ключ</td>
-                                <td class="price">від 45 000 грн</td>
-                            </tr>
-                            <tr>
-                                <td>Побутівка Б/В</td>
-                                <td>Різні розміри, гарний стан</td>
-                                <td class="price">від 15 000 грн</td>
-                            </tr>
-                            <tr>
-                                <td>Доставка побутівки</td>
-                                <td>Київ та область</td>
-                                <td class="price">від 800 грн</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="glass-card catalog-table-wrapper" style="padding:0;">
+                <table class="catalog-table">
+                    <thead>
+                        <tr>
+                            <th>Послуга</th>
+                            <th>Характеристики</th>
+                            <th>Ціна</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Маніпулятор (до 5т)</td>
+                            <td>Борт 6м, стріла 7м, м. Київ</td>
+                            <td class="price">від 2 500 грн/год</td>
+                        </tr>
+                        <tr>
+                            <td>Маніпулятор (5-10т)</td>
+                            <td>Борт 8м, стріла 10м, м. Київ</td>
+                            <td class="price">від 3 500 грн/год</td>
+                        </tr>
+                        <tr>
+                            <td>Маніпулятор (10-15т)</td>
+                            <td>Борт 12м, стріла 12м, м. Київ</td>
+                            <td class="price">від 4 500 грн/год</td>
+                        </tr>
+                        <tr>
+                            <td>Побутівка металева (оренда)</td>
+                            <td>6×2.4м, утеплена, електрика</td>
+                            <td class="price">від 4 500 грн/міс</td>
+                        </tr>
+                        <tr>
+                            <td>Побутівка дерев'яна (оренда)</td>
+                            <td>6×2.4м, утеплена, базова</td>
+                            <td class="price">від 3 000 грн/міс</td>
+                        </tr>
+                        <tr>
+                            <td>Побутівка металева (нова)</td>
+                            <td>6×2.4м, під ключ, електрика</td>
+                            <td class="price">від 65 000 грн</td>
+                        </tr>
+                        <tr>
+                            <td>Побутівка дерев'яна (нова)</td>
+                            <td>6×2.4м, під ключ</td>
+                            <td class="price">від 45 000 грн</td>
+                        </tr>
+                        <tr>
+                            <td>Побутівка Б/В</td>
+                            <td>Різні розміри, гарний стан</td>
+                            <td class="price">від 15 000 грн</td>
+                        </tr>
+                        <tr>
+                            <td>Доставка побутівки</td>
+                            <td>Київ та область</td>
+                            <td class="price">від 800 грн</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
