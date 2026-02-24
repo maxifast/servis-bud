@@ -140,25 +140,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- Form Submission (Viber redirect) ---
+  // --- Form Submission (Telegram redirect) ---
   function handleFormSubmit(form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = form.querySelector('input[type="text"]');
       const phone = form.querySelector('input[type="tel"]');
+      const service = form.querySelector('select'); // for hero form
 
       if (name && phone && name.value && phone.value) {
-        const message = encodeURIComponent('Заявка з сайту АТГ Сервіс Буд\nІм\'я: ' + name.value + '\nТелефон: ' + phone.value);
-        window.open('viber://chat?number=%2B380962873737&text=' + message, '_blank');
+        let text = `🔥 Нова заявка з сайту АТГ Сервіс Буд\n\n👤 Ім'я: ${name.value}\n📞 Телефон: ${phone.value}`;
+        if (service) {
+          text += `\n🎯 Цікавить: ${service.options[service.selectedIndex].text}`;
+        }
+
+        const tgUrl = 'https://t.me/+380962873737?text=' + encodeURIComponent(text);
+        window.open(tgUrl, '_blank');
 
         // Show success
         const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.textContent;
+        const originalText = btn.innerHTML;
         btn.textContent = '✓ Заявку надіслано!';
         btn.style.background = '#10B981';
+        btn.style.color = '#fff';
         setTimeout(() => {
-          btn.textContent = originalText;
+          btn.innerHTML = originalText;
           btn.style.background = '';
+          btn.style.color = '';
           form.reset();
         }, 3000);
       }
@@ -170,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroFormSubmit) handleFormSubmit(heroFormSubmit);
   if (footerForm) handleFormSubmit(footerForm);
 
-  // --- Send Calculator to Viber ---
-  document.querySelectorAll('.btn-calc-viber').forEach(btn => {
+  // --- Send Calculator to Telegram ---
+  document.querySelectorAll('.btn-calc-messenger').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const type = btn.getAttribute('data-type');
@@ -184,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hours = document.getElementById('calcHours').value;
         const result = document.getElementById('calcManipResult').textContent.trim();
 
-        message = `Заявка з калькулятора (Маніпулятор)\nВага вантажу: ${weightText}\nВідстань від Києва: ${distance} км\nГодин роботи: ${hours}\nОрієнтовна вартість: ${result}`;
+        message = `🚚 Заявка з калькулятора (Маніпулятор)\n\nВага вантажу: ${weightText}\nВідстань від Києва: ${distance} км\nГодин роботи: ${hours}\nОрієнтовна вартість: ${result}`;
       } else if (type === 'bytovka') {
         const typeSelect = document.getElementById('calcType');
         const typeText = typeSelect.options[typeSelect.selectedIndex].text;
@@ -194,12 +202,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const deliveryText = deliverySelect.options[deliverySelect.selectedIndex].text;
         const result = document.getElementById('calcBytResult').textContent.trim();
 
-        message = `Заявка з калькулятора (Побутівка)\nТип побутівки: ${typeText}\nСтан/Тип: ${conditionText}\nДоставка: ${deliveryText}\nВартість: ${result}`;
+        message = `🏠 Заявка з калькулятора (Побутівка)\n\nТип побутівки: ${typeText}\nСтан/Тип: ${conditionText}\nДоставка: ${deliveryText}\nВартість: ${result}`;
       }
 
       if (message) {
-        const viberUrl = 'viber://chat?number=%2B380962873737&text=' + encodeURIComponent(message);
-        window.open(viberUrl, '_blank');
+        const tgUrl = 'https://t.me/+380962873737?text=' + encodeURIComponent(message);
+        window.open(tgUrl, '_blank');
       }
     });
   });
