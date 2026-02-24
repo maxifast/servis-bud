@@ -1197,8 +1197,9 @@ a:hover {
 }
 
 .float-btn.viber-btn {
-  background: #7C4DFF;
-  color: white;
+  background: #ffffff;
+  color: #7C4DFF;
+  border: 1px solid #e5e7eb;
 }
 
 .float-btn.telegram-btn {
@@ -1527,7 +1528,9 @@ a:hover {
 }
 
 .msg-btn.viber-select {
-  background: #7C4DFF;
+  background: #ffffff;
+  color: #7C4DFF;
+  border: 1px solid #7C4DFF;
 }
 
 .msg-btn.telegram-select {
