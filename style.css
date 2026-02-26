@@ -746,7 +746,7 @@ a:hover {
 /* === ADVANTAGES SECTION === */
 .advantages-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 24px;
 }
 
@@ -1017,6 +1017,126 @@ a:hover {
 
 .proof-gallery-item:hover img {
   transform: scale(1.06);
+}
+
+/* === GALLERY SECTION === */
+.gallery-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.gallery-tab {
+  padding: 12px 24px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.gallery-tab:hover {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--text-primary);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.gallery-img {
+  width: 100%;
+  height: 400px;
+  /* Adjust height as needed */
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+.gallery-tab.active {
+  background: var(--primary);
+  color: #0F172A;
+  border-color: var(--primary);
+}
+
+.gallery-tab-content {
+  display: none;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.gallery-tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Swiper Customization */
+.gallery-slider {
+  padding-bottom: 50px;
+  /* space for pagination */
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.gallery-slider .swiper-slide {
+  height: auto;
+}
+
+.gallery-slider .placeholder-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: var(--radius-sm);
+}
+
+/* Custom Navigation Arrows */
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--primary) !important;
+  background: rgba(15, 23, 42, 0.8);
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50%;
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(4px);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 1.2rem !important;
+  font-weight: bold;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: var(--primary);
+  color: #0F172A !important;
+  border-color: var(--primary);
+}
+
+/* Custom Pagination */
+.swiper-pagination-bullet {
+  background: var(--text-muted) !important;
+  opacity: 0.5 !important;
+  transition: var(--transition);
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--primary) !important;
+  opacity: 1 !important;
+  transform: scale(1.3);
 }
 
 /* === FAQ SECTION === */

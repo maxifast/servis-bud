@@ -35,32 +35,85 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Manipulator Calculator ---
-  const calcWeight = document.getElementById('calcWeight');
-  const calcDistance = document.getElementById('calcDistance');
-  const calcHours = document.getElementById('calcHours');
-  const calcManipResult = document.getElementById('calcManipResult');
-
   function calculateManipulator() {
+    let calcLocation = document.getElementById('calcLocation');
+    const distanceGroup = document.getElementById('distanceGroup');
+    const calcDistance = document.getElementById('calcDistance');
+    if (!calcLocation && calcDistance && calcDistance.parentElement) {
+      // Forcibly inject if missing due to caching
+      const formGroup = document.createElement('div');
+      formGroup.className = 'form-group';
+      formGroup.innerHTML = '<label>Локація</label><select id="calcLocation" class="form-select"><option value="kyiv">Оренда по Києву</option><option value="region">Оренда по Області</option></select>';
+      calcDistance.parentElement.parentElement.insertBefore(formGroup, calcDistance.parentElement);
+      calcLocation = document.getElementById('calcLocation');
+      const distanceLabel = calcDistance.previousElementSibling;
+      if (distanceLabel) distanceLabel.innerText = "Відстань від Києва (км в одну сторону)";
+      calcDistance.parentElement.id = 'distanceGroup';
+      calcLocation.addEventListener('change', calculateManipulator);
+    }
+
+    const calcWeight = document.getElementById('calcWeight');
+    const calcHours = document.getElementById('calcHours');
+    const calcManipResult = document.getElementById('calcManipResult');
     const weight = parseInt(calcWeight.value);
-    let ratePerHour = 2500;
-    if (weight > 5 && weight <= 10) ratePerHour = 3500;
-    if (weight > 10) ratePerHour = 4500;
+    let ratePerHour = 1200; // До 4 тонн
+    let minOrderKyiv = 4600;
+    let minOrderRegion = 2400; // 2 години по 1200
+    let ratePerKm = 60;
 
+    if (weight > 4 && weight <= 10) {
+      ratePerHour = 1500;
+      minOrderKyiv = 5200;
+      minOrderRegion = 3000; // 2 години по 1500
+      ratePerKm = 60;
+    } else if (weight > 10) {
+      ratePerHour = 2000;
+      minOrderKyiv = 6400;
+      minOrderRegion = 4000; // 2 години по 2000
+      ratePerKm = 90;
+    }
+
+    const location = calcLocation ? calcLocation.value : 'kyiv';
     const distance = parseInt(calcDistance.value) || 0;
-    let hours = parseInt(calcHours.value) || 4;
-    if (hours < 4) hours = 4;
+    let hours = parseInt(calcHours.value) || 4; // Мінімально 4 години за замовчуванням у полі
+    // Завжди беремо мінімум 2 години для розрахунку "по факту"
+    if (hours < 2) hours = 2;
 
-    const baseCost = ratePerHour * hours;
-    const deliveryCost = distance > 0 ? distance * 25 : 0;
-    const total = baseCost + deliveryCost;
+    // Show/hide distance field
+    if (distanceGroup) {
+      if (location === 'region') {
+        distanceGroup.style.display = 'block';
+      } else {
+        distanceGroup.style.display = 'none';
+      }
+    }
+
+    let total = 0;
+
+    if (location === 'kyiv') {
+      // По Києву
+      const calculatedCost = ratePerHour * hours;
+      total = Math.max(calculatedCost, minOrderKyiv);
+    } else {
+      // По області
+      const calculatedCost = ratePerHour * hours;
+      const deliveryCost = (distance * 2) * ratePerKm;
+      const calculatedTotal = calculatedCost + deliveryCost;
+      const minRegionTotal = minOrderRegion + deliveryCost;
+      total = Math.max(calculatedTotal, minRegionTotal);
+    }
 
     calcManipResult.innerHTML = total.toLocaleString('uk-UA') + ' <small>грн</small>';
   }
 
-  if (calcWeight && calcDistance && calcHours) {
-    calcWeight.addEventListener('change', calculateManipulator);
-    calcDistance.addEventListener('input', calculateManipulator);
-    calcHours.addEventListener('input', calculateManipulator);
+  const calcWeightInit = document.getElementById('calcWeight');
+  const calcDistanceInit = document.getElementById('calcDistance');
+  const calcHoursInit = document.getElementById('calcHours');
+  if (calcWeightInit && calcDistanceInit && calcHoursInit) {
+    calcWeightInit.addEventListener('change', calculateManipulator);
+    calcDistanceInit.addEventListener('input', calculateManipulator);
+    calcHoursInit.addEventListener('input', calculateManipulator);
+    // Let calculateManipulator inject calcLocation on first run, then listen to it
     calculateManipulator();
   }
 
@@ -70,6 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcDelivery = document.getElementById('calcDelivery');
   const calcBytResult = document.getElementById('calcBytResult');
 
+  const rentOptionsContainer = document.getElementById('rentOptions');
+  const saleOptionsContainer = document.getElementById('saleOptions');
+
+  // Rent Checkboxes
+  const rentBed = document.getElementById('rentBed');
+  const rentSleepKit = document.getElementById('rentSleepKit');
+  const rentAc = document.getElementById('rentAc');
+  const rentHeater = document.getElementById('rentHeater');
+
+  // Sale Checkboxes
+  const saleOptionsBoxes = document.querySelectorAll('.sale-option');
+
   function calculateBytovka() {
     const type = calcType.value;
     const condition = calcCondition.value;
@@ -78,19 +143,39 @@ document.addEventListener('DOMContentLoaded', () => {
     let price = 0;
     let suffix = '';
 
+    // Toggle option visibility
     if (condition === 'rent') {
-      price = type === 'metal' ? 4500 : 3000;
-      suffix = 'грн/міс';
+      if (rentOptionsContainer) rentOptionsContainer.style.display = 'block';
+      if (saleOptionsContainer) saleOptionsContainer.style.display = 'none';
+
+      // Rent base is 120 per day -> 3600 for 30 days
+      price = 3600;
+      suffix = 'грн/30 днів';
+
+      // Rent Extras
+      if (rentBed && rentBed.checked) price += parseInt(rentBed.value); // ~6.67 * 30 = 200
+      if (rentSleepKit && rentSleepKit.checked) price += parseInt(rentSleepKit.value); // ~6.67 * 30 = 200
+      if (rentAc && rentAc.checked) price += parseInt(rentAc.value); // 90 * 30 = 2700
+      if (rentHeater && rentHeater.checked) price += parseInt(rentHeater.value); // 20 * 30 = 600
+
     } else if (condition === 'new') {
-      price = type === 'metal' ? 65000 : 45000;
+      if (rentOptionsContainer) rentOptionsContainer.style.display = 'none';
+      if (saleOptionsContainer) saleOptionsContainer.style.display = 'block';
+
+      // Sale base
+      price = type === 'metal' ? 87000 : 75000;
       suffix = 'грн';
-    } else if (condition === 'used') {
-      price = type === 'metal' ? 21000 : 15000;
-      suffix = 'грн';
+
+      // Sale Extras
+      saleOptionsBoxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          price += parseInt(checkbox.value);
+        }
+      });
     }
 
     if (delivery === 'yes') {
-      price += 800;
+      price += 4600; // Fixed delivery per instructions
     }
 
     calcBytResult.innerHTML = 'від ' + price.toLocaleString('uk-UA') + ' <small>' + suffix + '</small>';
@@ -100,6 +185,17 @@ document.addEventListener('DOMContentLoaded', () => {
     calcType.addEventListener('change', calculateBytovka);
     calcCondition.addEventListener('change', calculateBytovka);
     calcDelivery.addEventListener('change', calculateBytovka);
+
+    // Listeners for checkboxes
+    if (rentBed) rentBed.addEventListener('change', calculateBytovka);
+    if (rentSleepKit) rentSleepKit.addEventListener('change', calculateBytovka);
+    if (rentAc) rentAc.addEventListener('change', calculateBytovka);
+    if (rentHeater) rentHeater.addEventListener('change', calculateBytovka);
+
+    saleOptionsBoxes.forEach(box => {
+      box.addEventListener('change', calculateBytovka);
+    });
+
     calculateBytovka();
   }
 
@@ -247,21 +343,44 @@ document.addEventListener('DOMContentLoaded', () => {
       if (type === 'manipulator') {
         const weightSelect = document.getElementById('calcWeight');
         const weightText = weightSelect.options[weightSelect.selectedIndex].text;
+        const locationSelect = document.getElementById('calcLocation');
+        const locationText = locationSelect ? locationSelect.options[locationSelect.selectedIndex].text : 'Оренда по Києву';
         const distance = document.getElementById('calcDistance').value;
         const hours = document.getElementById('calcHours').value;
         const result = document.getElementById('calcManipResult').textContent.trim();
 
-        message = `🚚 Заявка з калькулятора (Маніпулятор)\n\nВага вантажу: ${weightText}\nВідстань від Києва: ${distance} км\nГодин роботи: ${hours}\nОрієнтовна вартість: ${result}`;
+        let distanceText = locationSelect.value === 'region' ? `\nВідстань: ${distance} км (в одну сторону)` : '';
+
+        message = `🚚 Заявка з калькулятора (Маніпулятор)\n\nЛокація: ${locationText}\nВага вантажу: ${weightText}${distanceText}\nГодин роботи: ${hours}\nОрієнтовна вартість: ${result}`;
       } else if (type === 'bytovka') {
         const typeSelect = document.getElementById('calcType');
         const typeText = typeSelect.options[typeSelect.selectedIndex].text;
         const conditionSelect = document.getElementById('calcCondition');
         const conditionText = conditionSelect.options[conditionSelect.selectedIndex].text;
+        const conditionVal = conditionSelect.value;
         const deliverySelect = document.getElementById('calcDelivery');
         const deliveryText = deliverySelect.options[deliverySelect.selectedIndex].text;
         const result = document.getElementById('calcBytResult').textContent.trim();
 
-        message = `🏠 Заявка з калькулятора (Побутівка)\n\nТип побутівки: ${typeText}\nСтан/Тип: ${conditionText}\nДоставка: ${deliveryText}\nВартість: ${result}`;
+        let addonsInfo = '';
+        if (conditionVal === 'rent') {
+          const activeRent = [];
+          if (document.getElementById('rentBed').checked) activeRent.push('Ліжка');
+          if (document.getElementById('rentSleepKit').checked) activeRent.push('Сп. комплект');
+          if (document.getElementById('rentAc').checked) activeRent.push('Кондиціонер');
+          if (document.getElementById('rentHeater').checked) activeRent.push('Конвектор');
+          if (activeRent.length) addonsInfo = `\nДопи: ${activeRent.join(', ')}`;
+        } else if (conditionVal === 'new') {
+          const activeSale = [];
+          document.querySelectorAll('.sale-option').forEach(checkbox => {
+            if (checkbox.checked) {
+              activeSale.push(checkbox.parentElement.textContent.trim());
+            }
+          });
+          if (activeSale.length) addonsInfo = `\nДопи: ${activeSale.join(', ')}`;
+        }
+
+        message = `🏠 Заявка з калькулятора (Побутівка)\n\nТип: ${typeText}\nЗамовлення: ${conditionText}${addonsInfo}\nДоставка: ${deliveryText}\nВартість: ${result}`;
       }
 
       if (message) {
@@ -280,6 +399,57 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!val.startsWith('+380')) val = '+380' + val.replace(/^\+?3?8?0?/, '');
       if (val.length > 13) val = val.slice(0, 13);
       input.value = val;
+    });
+  });
+
+  // --- Gallery Tabs ---
+  const galleryTabs = document.querySelectorAll('.gallery-tab');
+  const galleryContents = document.querySelectorAll('.gallery-tab-content');
+  let swipers = {};
+
+  function initSwiper(id) {
+    if (swipers[id]) return; // Already initialized
+
+    swipers[id] = new Swiper(`#${id}`, {
+      slidesPerView: 1,
+      spaceBetween: 16,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: { slidesPerView: 2, spaceBetween: 20 },
+        1024: { slidesPerView: 3, spaceBetween: 24 }
+      }
+    });
+  }
+
+  // Init the first active swiper on load
+  const activeTabTarget = document.querySelector('.gallery-tab.active')?.dataset.target;
+  if (activeTabTarget) {
+    initSwiper('swiper-' + activeTabTarget.split('-')[1]);
+  }
+
+  galleryTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      galleryTabs.forEach(t => t.classList.remove('active'));
+      galleryContents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked tab and corresponding content
+      tab.classList.add('active');
+      const targetId = tab.dataset.target;
+      const targetContent = document.getElementById(targetId);
+
+      if (targetContent) {
+        targetContent.classList.add('active');
+        // Initialize swiper if not yet initialized
+        initSwiper('swiper-' + targetId.split('-')[1]);
+      }
     });
   });
 
