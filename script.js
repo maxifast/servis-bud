@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const distanceLabel = calcDistance.previousElementSibling;
       if (distanceLabel) distanceLabel.innerText = "Відстань, км (Київ - місце завантаження - місце вивантаження- Київ)";
       calcDistance.parentElement.id = 'distanceGroup';
-      calcLocation.addEventListener('change', calculateManipulator);
     }
 
     const calcWeight = document.getElementById('calcWeight');
@@ -125,11 +124,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcWeightInit = document.getElementById('calcWeight');
   const calcDistanceInit = document.getElementById('calcDistance');
   const calcHoursInit = document.getElementById('calcHours');
+  const calcLocationInit = document.getElementById('calcLocation');
   if (calcWeightInit && calcDistanceInit && calcHoursInit) {
     calcWeightInit.addEventListener('change', calculateManipulator);
     calcDistanceInit.addEventListener('input', calculateManipulator);
     calcHoursInit.addEventListener('input', calculateManipulator);
-    // Let calculateManipulator inject calcLocation on first run, then listen to it
+    if (calcLocationInit) calcLocationInit.addEventListener('change', calculateManipulator);
     calculateManipulator();
   }
 
