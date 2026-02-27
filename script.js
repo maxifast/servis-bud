@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
       calcDistance.parentElement.parentElement.insertBefore(formGroup, calcDistance.parentElement);
       calcLocation = document.getElementById('calcLocation');
       const distanceLabel = calcDistance.previousElementSibling;
-      if (distanceLabel) distanceLabel.innerText = "Відстань від Києва (км в одну сторону)";
+      if (distanceLabel) distanceLabel.innerText = "Відстань, км (Київ - місце завантаження - місце вивантаження- Київ)";
       calcDistance.parentElement.id = 'distanceGroup';
       calcLocation.addEventListener('change', calculateManipulator);
     }
@@ -108,14 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
       total = calculatedCost;
     } else {
       // По області
-      let calculatedCost = regionBaseCost; // Включає 2 години роботи + подачу 1200
+      let calculatedCost = regionBaseCost; // Включає 2 години роботи + подачу
 
       // Якщо годин більше 2-х, кожна наступна година тарифікується згідно rentPerHour
       if (hours > 2) {
         calculatedCost += (hours - 2) * ratePerHour;
       }
 
-      const deliveryCost = (distance * 2) * ratePerKm;
+      const deliveryCost = distance * ratePerKm;
       total = calculatedCost + deliveryCost;
     }
 
