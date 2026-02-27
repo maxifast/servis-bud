@@ -405,7 +405,7 @@
                                 в одну сторону)</label><input type="number" id="calcDistance" class="form-input"
                                 placeholder="0" min="0" max="200" value="0"></div>
                         <div class="form-group"><label>Кількість годин роботи</label><input type="number" id="calcHours"
-                                class="form-input" placeholder="4" min="4" max="24" value="4"></div>
+                                class="form-input" placeholder="2" min="2" max="24" value="2"></div>
                     </div>
                     <div class="calc-result">
                         <p class="calc-result-label">Орієнтовна вартість</p>
@@ -430,18 +430,17 @@
                     </div>
                     <div class="calc-fields">
                         <div class="form-group"><label>Тип побутівки</label><select id="calcType" class="form-select">
+                                <option value="wood" selected>Дерев'яна (6,0х2,4х2,5)</option>
                                 <option value="metal">Металева (6,0х2,4х2,5)</option>
-                                <option value="wood">Дерев'яна (6,0х2,4х2,5)</option>
                             </select></div>
                         <div class="form-group"><label>Стан / Тип замовлення</label><select id="calcCondition"
                                 class="form-select">
                                 <option value="rent">Оренда (30 днів)</option>
                                 <option value="new">Купити нову</option>
                             </select></div>
-                        <div class="form-group"><label>Потрібна доставка?</label><select id="calcDelivery"
-                                class="form-select">
-                                <option value="no">Ні, самовивіз</option>
-                                <option value="yes">Так, потрібна доставка</option>
+                        <div class="form-group" style="display:none;"><label>Потрібна доставка?</label><select
+                                id="calcDelivery" class="form-select">
+                                <option value="yes" selected>Так, потрібна доставка</option>
                             </select></div>
 
                         <!-- Rent Options -->
@@ -451,10 +450,12 @@
                                 style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 5px;">
                                 <label
                                     style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.9rem;"><input
-                                        type="checkbox" id="rentBed" value="200"> Металеві двоярусні ліжка</label>
+                                        type="number" id="rentBed" value="0" min="0" max="10" style="width: 50px;">
+                                    Металеві двоярусні ліжка (200 грн)</label>
                                 <label
                                     style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.9rem;"><input
-                                        type="checkbox" id="rentSleepKit" value="200"> Спальний комплект</label>
+                                        type="number" id="rentSleepKit" value="0" min="0" max="10" style="width: 50px;">
+                                    Спальний комплект (подушка, матрац, ковдра - 200 грн)</label>
                                 <label
                                     style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.9rem;"><input
                                         type="checkbox" id="rentAc" value="2700"> Кондиціонер</label>

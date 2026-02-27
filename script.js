@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const calcManipResult = document.getElementById('calcManipResult');
     const weight = parseInt(calcWeight.value);
     let ratePerHour = 1200; // До 4 тонн
-    let minOrderKyiv = 4600;
+    let minOrderKyiv = 4200;
     let minOrderRegion = 2400; // 2 години по 1200
     let ratePerKm = 60;
 
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const location = calcLocation ? calcLocation.value : 'kyiv';
     const distance = parseInt(calcDistance.value) || 0;
-    let hours = parseInt(calcHours.value) || 4; // Мінімально 4 години за замовчуванням у полі
+    let hours = parseInt(calcHours.value) || 2; // Мінімально 2 години за замовчуванням у полі
     // Завжди беремо мінімум 2 години для розрахунку "по факту"
     if (hours < 2) hours = 2;
 
@@ -98,9 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
       // По області
       const calculatedCost = ratePerHour * hours;
       const deliveryCost = (distance * 2) * ratePerKm;
-      const calculatedTotal = calculatedCost + deliveryCost;
+
+      // Calculate minimum for region + delivery
       const minRegionTotal = minOrderRegion + deliveryCost;
-      total = Math.max(calculatedTotal, minRegionTotal);
+      const calculatedTotal = calculatedCost + deliveryCost;
+
+      // Use minOrderKyiv as the absolute floor of the order cost before delivery or the combined calculation
+      total = Math.max(calculatedTotal, minOrderKyiv, minRegionTotal);
     }
 
     calcManipResult.innerHTML = total.toLocaleString('uk-UA') + ' <small>грн</small>';
@@ -153,8 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
       suffix = 'грн/30 днів';
 
       // Rent Extras
-      if (rentBed && rentBed.checked) price += parseInt(rentBed.value); // ~6.67 * 30 = 200
-      if (rentSleepKit && rentSleepKit.checked) price += parseInt(rentSleepKit.value); // ~6.67 * 30 = 200
+      const bedQty = rentBed ? parseInt(rentBed.value) || 0 : 0;
+      const sleepKitQty = rentSleepKit ? parseInt(rentSleepKit.value) || 0 : 0;
+
+      if (bedQty > 0) price += bedQty * 200;
+      if (sleepKitQty > 0) price += sleepKitQty * 200;
+
       if (rentAc && rentAc.checked) price += parseInt(rentAc.value); // 90 * 30 = 2700
       if (rentHeater && rentHeater.checked) price += parseInt(rentHeater.value); // 20 * 30 = 600
 
@@ -174,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    if (delivery === 'yes') {
+    if (delivery === 'yes' && condition !== 'new') {
       price += 4600; // Fixed delivery per instructions
     }
 
@@ -186,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
     calcCondition.addEventListener('change', calculateBytovka);
     calcDelivery.addEventListener('change', calculateBytovka);
 
-    // Listeners for checkboxes
-    if (rentBed) rentBed.addEventListener('change', calculateBytovka);
-    if (rentSleepKit) rentSleepKit.addEventListener('change', calculateBytovka);
+    // Listeners for inputs/checkboxes
+    if (rentBed) rentBed.addEventListener('input', calculateBytovka);
+    if (rentSleepKit) rentSleepKit.addEventListener('input', calculateBytovka);
     if (rentAc) rentAc.addEventListener('change', calculateBytovka);
     if (rentHeater) rentHeater.addEventListener('change', calculateBytovka);
 
@@ -196,6 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
       box.addEventListener('change', calculateBytovka);
     });
 
+    calculateBytovka();
+  }
+
+  // Set initial condition and re-calculate
+  if (calcCondition && calcCondition.value === 'new') {
     calculateBytovka();
   }
 
@@ -365,10 +378,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let addonsInfo = '';
         if (conditionVal === 'rent') {
           const activeRent = [];
-          if (document.getElementById('rentBed').checked) activeRent.push('Ліжка');
-          if (document.getElementById('rentSleepKit').checked) activeRent.push('Сп. комплект');
-          if (document.getElementById('rentAc').checked) activeRent.push('Кондиціонер');
-          if (document.getElementById('rentHeater').checked) activeRent.push('Конвектор');
+          const rentBedQty = parseInt(document.getElementById('rentBed').value) || 0;
+          const rentSleepQty = parseInt(document.getElementById('rentSleepKit').value) || 0;
+
+          if (rentBedQty > 0) activeRent.push(`Ліжка (${rentBedQty} шт)`);
+          if (rentSleepQty > 0) activeRent.push(`Сп. комплект (${rentSleepQty} шт)`);
+
+          if (document.getElementById('rentAc') && document.getElementById('rentAc').checked) activeRent.push('Кондиціонер');
+          if (document.getElementById('rentHeater') && document.getElementById('rentHeater').checked) activeRent.push('Конвектор');
           if (activeRent.length) addonsInfo = `\nДопи: ${activeRent.join(', ')}`;
         } else if (conditionVal === 'new') {
           const activeSale = [];
