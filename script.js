@@ -161,6 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const condition = calcCondition.value;
     const delivery = calcDelivery.value;
 
+    const qtyInput = document.getElementById('calcBytQuantity');
+    const quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+
     let price = 0;
     let suffix = '';
 
@@ -199,9 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    if (delivery === 'yes' && condition !== 'new') {
-      price += 4600; // Fixed delivery per instructions
-    }
+    // Multiple quantity scaling
+    price = price * quantity;
 
     calcBytResult.innerHTML = 'від ' + price.toLocaleString('uk-UA') + ' <small>' + suffix + '</small>';
   }
@@ -210,6 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
     calcType.addEventListener('change', calculateBytovka);
     calcCondition.addEventListener('change', calculateBytovka);
     calcDelivery.addEventListener('change', calculateBytovka);
+
+    const calcBytQuantity = document.getElementById('calcBytQuantity');
+    if (calcBytQuantity) calcBytQuantity.addEventListener('input', calculateBytovka);
 
     // Listeners for inputs/checkboxes
     if (rentBed) rentBed.addEventListener('input', calculateBytovka);
@@ -393,6 +398,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = document.getElementById('calcBytResult').textContent.trim();
 
         let addonsInfo = '';
+        const qtyInput = document.getElementById('calcBytQuantity');
+        const quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+        const qtyText = `\nКількість побутівок: ${quantity} шт`;
+
         if (conditionVal === 'rent') {
           const activeRent = [];
           const rentBedQty = parseInt(document.getElementById('rentBed').value) || 0;
@@ -414,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (activeSale.length) addonsInfo = `\nДопи: ${activeSale.join(', ')}`;
         }
 
-        message = `🏠 Заявка з калькулятора (Побутівка)\n\nТип: ${typeText}\nЗамовлення: ${conditionText}${addonsInfo}\nДоставка: ${deliveryText}\nВартість: ${result}`;
+        message = `🏠 Заявка з калькулятора (Побутівка)\n\nТип: ${typeText}\nЗамовлення: ${conditionText}${qtyText}${addonsInfo}\nДоставка: ${deliveryText}\nВартість: ${result}`;
       }
 
       if (message) {
