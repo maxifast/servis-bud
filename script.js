@@ -92,11 +92,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (location === 'kyiv') {
       // По Києву
-      const calculatedCost = ratePerHour * hours;
-      total = Math.max(calculatedCost, minOrderKyiv);
+      let calculatedCost = 0;
+      if (hours === 2) {
+        calculatedCost = minOrderKyiv;
+      } else if (hours === 3) {
+        calculatedCost = minOrderKyiv + ratePerHour;
+      } else {
+        // За 4 і більше годин
+        calculatedCost = ratePerHour * hours;
+        // Перевірка на всяк випадок, щоб не просіло нижче
+        calculatedCost = Math.max(calculatedCost, minOrderKyiv + (ratePerHour * 2));
+      }
+      total = calculatedCost;
     } else {
       // По області
-      const calculatedCost = ratePerHour * hours;
+      let calculatedCost = 0;
+      if (hours === 2) {
+        calculatedCost = minOrderKyiv;
+      } else if (hours === 3) {
+        calculatedCost = minOrderKyiv + ratePerHour;
+      } else {
+        calculatedCost = Math.max(ratePerHour * hours, minOrderKyiv + (ratePerHour * 2));
+      }
       const deliveryCost = (distance * 2) * ratePerKm;
 
       // Calculate minimum for region + delivery
