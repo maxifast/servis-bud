@@ -58,18 +58,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const weight = parseInt(calcWeight.value);
     let ratePerHour = 1200; // До 4 тонн
     let minOrderKyiv = 4200;
-    let minOrderRegion = 2400; // 2 години по 1200
+
+    // Region base prices
+    let regionBaseCost = 3600; // 2 години + подача (до 4т)
     let ratePerKm = 60;
 
     if (weight > 4 && weight <= 10) {
       ratePerHour = 1500;
       minOrderKyiv = 5200;
-      minOrderRegion = 3000; // 2 години по 1500
+      regionBaseCost = 4500;
       ratePerKm = 60;
     } else if (weight > 10) {
       ratePerHour = 2000;
       minOrderKyiv = 6400;
-      minOrderRegion = 4000; // 2 години по 2000
+      regionBaseCost = 7000;
       ratePerKm = 90;
     }
 
@@ -106,22 +108,15 @@ document.addEventListener('DOMContentLoaded', () => {
       total = calculatedCost;
     } else {
       // По області
-      let calculatedCost = 0;
-      if (hours === 2) {
-        calculatedCost = minOrderKyiv;
-      } else if (hours === 3) {
-        calculatedCost = minOrderKyiv + ratePerHour;
-      } else {
-        calculatedCost = Math.max(ratePerHour * hours, minOrderKyiv + (ratePerHour * 2));
+      let calculatedCost = regionBaseCost; // Включає 2 години роботи + подачу 1200
+
+      // Якщо годин більше 2-х, кожна наступна година тарифікується згідно rentPerHour
+      if (hours > 2) {
+        calculatedCost += (hours - 2) * ratePerHour;
       }
+
       const deliveryCost = (distance * 2) * ratePerKm;
-
-      // Calculate minimum for region + delivery
-      const minRegionTotal = minOrderRegion + deliveryCost;
-      const calculatedTotal = calculatedCost + deliveryCost;
-
-      // Use minOrderKyiv as the absolute floor of the order cost before delivery or the combined calculation
-      total = Math.max(calculatedTotal, minOrderKyiv, minRegionTotal);
+      total = calculatedCost + deliveryCost;
     }
 
     calcManipResult.innerHTML = total.toLocaleString('uk-UA') + ' <small>грн</small>';
