@@ -295,6 +295,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Копіювання тексту в буфер обміну (з фолбеком для старих браузерів)
+  function copyToClipboard(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      }
+      const tempInput = document.createElement('textarea');
+      tempInput.value = text;
+      tempInput.style.position = 'fixed';
+      tempInput.style.opacity = '0';
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+    } catch (err) { }
+  }
+
+  // Viber не підставляє текст у чат через посилання, тому показуємо
+  // підказку «текст скопійовано — вставте та надішліть» з кнопкою відкриття Viber
+  function showViberHint(link) {
+    const overlay = document.createElement('div');
+    overlay.className = 'messenger-modal-overlay active';
+    overlay.innerHTML =
+      '<div class="messenger-modal-content glass-card" style="text-align:center;">' +
+      '<div style="font-size:2.2rem;margin-bottom:10px;">✅</div>' +
+      '<h3 style="margin-bottom:10px;font-size:1.2rem;">Текст заявки скопійовано!</h3>' +
+      '<p style="color:var(--text-muted);font-size:0.95rem;line-height:1.6;margin-bottom:20px;">' +
+      'Viber не вміє підставляти текст автоматично.<br>' +
+      'У чаті, що відкриється, натисніть у полі вводу<br><strong style="color:var(--primary);">«Вставити»</strong> і надішліть повідомлення.</p>' +
+      '<button class="btn btn-primary" style="width:100%;padding:14px;" id="openViberBtn">Відкрити Viber</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#openViberBtn').addEventListener('click', () => {
+      window.open(link, '_blank');
+      overlay.remove();
+    });
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.remove();
+    });
+  }
+
   document.querySelectorAll('.msg-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -305,14 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
       let link = '';
       if (messenger === 'viber') {
         link = 'viber://chat?number=380962873737&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
-        try {
-          const tempInput = document.createElement('textarea');
-          tempInput.value = text;
-          document.body.appendChild(tempInput);
-          tempInput.select();
-          document.execCommand('copy');
-          document.body.removeChild(tempInput);
-        } catch (err) { }
+        copyToClipboard(text);
+        window.closeMessengerModal();
+        showViberHint(link);
+        return;
       } else if (messenger === 'telegram') {
         link = 'https://t.me/+380962873737?text=' + encodeURIComponent(text);
       } else if (messenger === 'whatsapp') {
