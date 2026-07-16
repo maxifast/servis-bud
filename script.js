@@ -351,7 +351,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pageGoal) {
           text += `\n🎯 Цікавить: ${pageGoal}`;
           if (service) {
-            text += `\n🛠 Вид робіт: ${service.options[service.selectedIndex].text}`;
+            // Підпис рядка з деталями задається через <body data-lead-detail-label="...">
+            const detailLabel = document.body.dataset.leadDetailLabel || 'Вид робіт';
+            text += `\n🛠 ${detailLabel}: ${service.options[service.selectedIndex].text}`;
           }
         } else if (service) {
           text += `\n🎯 Цікавить: ${service.options[service.selectedIndex].text}`;
