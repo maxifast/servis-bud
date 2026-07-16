@@ -319,14 +319,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = pendingMessengerMessage;
       if (!text) return;
 
+      // Номер, на який іде заявка — задається через <body data-contact-phone="380...">
+      const phone = document.body.dataset.contactPhone || '380962873737';
+
       let link = '';
       if (messenger === 'viber') {
-        link = 'viber://chat?number=380962873737&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
+        link = 'viber://chat?number=' + phone + '&draft=' + encodeURIComponent(text) + '&text=' + encodeURIComponent(text);
         copyToClipboard(text);
       } else if (messenger === 'telegram') {
-        link = 'https://t.me/+380962873737?text=' + encodeURIComponent(text);
+        link = 'https://t.me/+' + phone + '?text=' + encodeURIComponent(text);
       } else if (messenger === 'whatsapp') {
-        link = 'https://wa.me/380962873737?text=' + encodeURIComponent(text);
+        link = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text);
       }
 
       if (link) {
