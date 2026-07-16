@@ -336,7 +336,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (name && phone && name.value && phone.value) {
         let text = `🔥 Нова заявка з сайту АТГ Сервіс Буд\n\n👤 Ім'я: ${name.value}\n📞 Телефон: ${phone.value}`;
-        if (service) {
+        // Ціль ліда для всієї сторінки (наприклад, "Оренда екскаватора") — задається через <body data-lead-goal="...">
+        const pageGoal = document.body.dataset.leadGoal;
+        if (pageGoal) {
+          text += `\n🎯 Цікавить: ${pageGoal}`;
+          if (service) {
+            text += `\n🛠 Вид робіт: ${service.options[service.selectedIndex].text}`;
+          }
+        } else if (service) {
           text += `\n🎯 Цікавить: ${service.options[service.selectedIndex].text}`;
         }
 

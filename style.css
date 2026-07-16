@@ -576,7 +576,7 @@ a:hover {
 /* === SERVICES SECTION === */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
 
@@ -1385,12 +1385,6 @@ a:hover {
 
   .services-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .services-grid .service-card:last-child {
-    grid-column: span 2;
-    max-width: 500px;
-    margin: 0 auto;
     width: 100%;
   }
 
@@ -1473,11 +1467,6 @@ a:hover {
 
   .services-grid {
     grid-template-columns: 1fr;
-  }
-
-  .services-grid .service-card:last-child {
-    grid-column: span 1;
-    max-width: 100%;
   }
 
   .advantages-grid {
